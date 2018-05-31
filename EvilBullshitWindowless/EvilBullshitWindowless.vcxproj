@@ -91,6 +91,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -102,6 +103,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,6 +119,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,6 +135,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,9 +143,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EvilBullshitWindowless.h" />
+    <ClInclude Include="GameEntity.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="splashIamge.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stringFunctions.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="windowsCrap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EvilBullshitWindowless.cpp" />
@@ -156,8 +164,26 @@
     <ResourceCompile Include="EvilBullshitWindowless.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\Pictures\elephant.png" />
+    <Image Include="bitmap1.bmp" />
+    <Image Include="elephant.png" />
     <Image Include="EvilBullshitWindowless.ico" />
+    <Image Include="logo-1.png" />
+    <Image Include="logo-2.png" />
+    <Image Include="logo-3.png" />
+    <Image Include="logo.png" />
+    <Image Include="pac-down-closed.png" />
+    <Image Include="pac-down-open.png" />
+    <Image Include="pac-left-closed.png" />
+    <Image Include="pac-left-open.png" />
+    <Image Include="pac-right-closed.png" />
+    <Image Include="pac-right-open.png" />
+    <Image Include="pac-up-closed.png" />
+    <Image Include="pac-up-open.png" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="idi_spla.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

