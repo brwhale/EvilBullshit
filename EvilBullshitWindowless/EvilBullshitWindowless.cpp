@@ -29,6 +29,7 @@ HWND g_splashWindow;
 HWND g_evilWindow;
 HBITMAP g_slashMap;
 vector<HBITMAP> logoAnimation;
+
 int maxx;
 int maxy;
 bool left, right, up, down;
@@ -63,10 +64,51 @@ int rotclamp(int val, int min, int max) {
 }
 
 #include "GameEntity.h"
-GameEntity pacMan = GameEntity(0, 0, 48, 48, vector<HBITMAP>(), g_splashWindow);
+GameEntity pacMan,inky,blinky,pinky,clyde;
 
 // enter loop of sillyness
 void loopforever() {
+	// get the primary monitor's info
+	HMONITOR hmonPrimary = MonitorFromPoint(ptZero, MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFO monitorinfo = { 0 };
+	monitorinfo.cbSize = sizeof(monitorinfo);
+	GetMonitorInfo(hmonPrimary, &monitorinfo);
+
+	// center the splash screen in the middle of the primary work area
+	RECT & rcWork = monitorinfo.rcWork;
+	maxx = rcWork.right - rcWork.left;
+	maxy = rcWork.bottom - rcWork.top;
+
+	// set game items
+	pacMan = GameEntity(0, 0, 48, 48, g_splashWindow);
+	inky = GameEntity(0, 0, 48, 48);
+	blinky = GameEntity(maxx - 100, 0, 48, 48);
+	pinky = GameEntity(maxx - 100, maxy - 100, 48, 48);
+	clyde = GameEntity(0, maxy - 100, 48, 48);
+
+	vector<GameEntity*> ghosts = { &inky,&blinky,&pinky,&clyde };
+
+	// load images here
+	g_slashMap = LoadSplashImage(IDB_PNG1);
+	logoAnimation = vector<HBITMAP>();
+	logoAnimation.push_back(LoadSplashImage(IDB_logo0));
+	logoAnimation.push_back(LoadSplashImage(IDB_logo1));
+	logoAnimation.push_back(LoadSplashImage(IDB_logo2));
+	logoAnimation.push_back(LoadSplashImage(IDB_logo3));
+
+	// create splash window and init it
+	g_splashWindow = CreateSplashWindow(hInst);
+	g_evilWindow = CreateSplashWindow(hInst);
+	SetSplashImage(g_splashWindow, g_slashMap, 0, 0, true);
+	SetSplashImage(g_evilWindow, g_slashMap, 0, 0, true);
+
+	//set sprites for characters
+	pacMan.LoadSpritemap({ IDB_Pac_l_c,IDB_Pac_l_o,IDB_Pac_r_c,IDB_Pac_r_o,IDB_Pac_u_c,IDB_Pac_u_o,IDB_Pac_d_c,IDB_Pac_d_o });
+	inky.LoadSpritemap({ IDB_Ink_l,IDB_Ink_l,IDB_Ink_r,IDB_Ink_r,IDB_Ink_u,IDB_Ink_u,IDB_Ink_d,IDB_Ink_d });
+	blinky.LoadSpritemap({ IDB_Blink_l,IDB_Blink_l,IDB_Blink_r,IDB_Blink_r,IDB_Blink_u,IDB_Blink_u,IDB_Blink_d,IDB_Blink_d });
+	pinky.LoadSpritemap({ IDB_Pink_l,IDB_Pink_l,IDB_Pink_r,IDB_Pink_r,IDB_Pink_u,IDB_Pink_u,IDB_Pink_d,IDB_Pink_d });
+	clyde.LoadSpritemap({ IDB_Clyde_l,IDB_Clyde_l,IDB_Clyde_r,IDB_Clyde_r,IDB_Clyde_u,IDB_Clyde_u,IDB_Clyde_d,IDB_Clyde_d });
+
 	// set up objects
 	unsigned int state = 0;
 	unsigned int oldState = 0;
@@ -79,83 +121,90 @@ void loopforever() {
 		if (pattern.length() > patternLength)
 			patternLength = pattern.length();
 	}
-
-	//// get the primary monitor's info
-	HMONITOR hmonPrimary = MonitorFromPoint(ptZero, MONITOR_DEFAULTTOPRIMARY);
-	MONITORINFO monitorinfo = { 0 };
-	monitorinfo.cbSize = sizeof(monitorinfo);
-	GetMonitorInfo(hmonPrimary, &monitorinfo);
-
-	//// center the splash screen in the middle of the primary work area
-	RECT & rcWork = monitorinfo.rcWork;
-	maxx = rcWork.right - rcWork.left;
-	maxy = rcWork.bottom - rcWork.top;
-	int xxx = 0;
-	int yyy = 0;
+	
+	int posX = 0;
+	int posY = 0;
 	int yd = 1;
 	int xd = 1;
 	int i = 0;
 	int gamestate = 0;
 	left = right = up = down = false;
 
-	pacMan.LoadSpritemap({ IDB_Pac_l_c,IDB_Pac_l_o,IDB_Pac_r_c,IDB_Pac_r_o,IDB_Pac_u_c,IDB_Pac_u_o,IDB_Pac_d_c,IDB_Pac_d_o });
-
 	// enter loop state
 	while (1) {
 		// do bounce animation
 		{
-			SwitchToThisWindow(g_splashWindow, true);
-
-			if (xxx > maxx - g_sizeSplash.cx || xxx < 0) {
+			if (posX > maxx - g_sizeSplash.cx || posX < 0) {
 				xd *= -1;
 			}
-			xxx += xd;
-			if (yyy > maxy - g_sizeSplash.cy || yyy < 0) {
+			posX += xd;
+			if (posY > maxy - g_sizeSplash.cy || posY < 0) {
 				yd *= -1;
 			}
-			yyy += yd;
+			posY += yd;
 			i++;
 			if (i < 0 || i >= 4000) {
 				i = 0;
 				if (gamestate == 0) {
 					gamestate = 1;
-					pacMan.x = xxx;
-					pacMan.y = yyy;
-					pacMan.window = g_splashWindow;
+					pacMan.x = posX;
+					pacMan.y = posY;
+					SwitchToThisWindow(clyde.window, true);
+					SwitchToThisWindow(inky.window, true);
+					SwitchToThisWindow(pinky.window, true);
+					SwitchToThisWindow(blinky.window, true);
 				}
 			}
 		}
 		if (gamestate == 0) {
-			SetSplashImage(g_splashWindow, logoAnimation[(i % 40)/10], xxx, yyy);
+			SwitchToThisWindow(g_splashWindow, true);
+			SetSplashImage(g_splashWindow, logoAnimation[(i % 40)/10], posX, posY);
 		} else
 		if (gamestate == 1) {
-			SetSplashImage(g_evilWindow, logoAnimation[(i % 40) / 10], xxx, yyy);
+			SetSplashImage(g_splashWindow, logoAnimation[((1+i) % 40) / 10], maxx-posX, posY);
+			SetSplashImage(g_evilWindow, logoAnimation[(i % 40) / 10], posX, posY);
+			SwitchToThisWindow(pacMan.window, true);
 			i++;
 			if (i < 0 || i >= 200) {
 				i = 0;
 			}
 			// only use the most recent direction
-			bool test;
-			if (test = GetAsyncKeyState(VK_LEFT)) {
-				if (!left)
-					pacMan.direction = 0;
+			{
+				bool test;
+				if (test = GetAsyncKeyState(VK_LEFT)) {
+					if (!left)
+						pacMan.direction = 0;
+				}
+				left = test;
+				if (test = GetAsyncKeyState(VK_RIGHT)) {
+					if (!right)
+						pacMan.direction = 1;
+				}
+				right = test;
+				if (test = GetAsyncKeyState(VK_UP)) {
+					if (!up)
+						pacMan.direction = 2;
+				}
+				up = test;
+				if (test = GetAsyncKeyState(VK_DOWN)) {
+					if (!down)
+						pacMan.direction = 3;
+				}
+				down = test;
 			}
-			left = test;
-			if (test = GetAsyncKeyState(VK_RIGHT)) {
-				if (!right)
-					pacMan.direction = 1;
+
+			// have ghosts target eachother
+			/*for (int k = 0; k < ghosts.size(); k++) {
+				auto kprime = rotclamp(k+1, 0, ghosts.size() - 1);
+				ghosts[k]->target(ghosts[kprime]->x, ghosts[kprime]->y);
+			}*/
+
+			for (auto&& ghost : ghosts) {
+				// have ghosts target you
+				ghost->target(pacMan.x, pacMan.y);
+				ghost->update();
+				ghost->draw();
 			}
-			right = test;
-			if (test = GetAsyncKeyState(VK_UP)) {
-				if (!up)
-					pacMan.direction = 2;
-			} 
-			up = test;
-			if (test = GetAsyncKeyState(VK_DOWN)) {
-				if (!down)
-					pacMan.direction = 3;
-			}
-			down = test;
 
 			pacMan.update();
 			pacMan.draw();

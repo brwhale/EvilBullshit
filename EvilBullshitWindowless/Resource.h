@@ -27,6 +27,23 @@
 #define IDB_Pac_r_o                     142
 #define IDB_Pac_u_c                     143
 #define IDB_Pac_u_o                     144
+#define IDB_PNG2                        145
+#define IDB_Ink_d                       145
+#define IDB_Ink_l                       146
+#define IDB_Ink_r                       147
+#define IDB_Ink_u                       148
+#define IDB_Blink_d                     149
+#define IDB_Blink_l                     150
+#define IDB_Blink_r                     151
+#define IDB_Blink_u                     152
+#define IDB_Clyde_d                     153
+#define IDB_Clyde_l                     154
+#define IDB_Clyde_r                     155
+#define IDB_Clyde_u                     156
+#define IDB_Pink_d                      157
+#define IDB_Pink_l                      158
+#define IDB_Pink_r                      159
+#define IDB_Pink_u                      160
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -34,7 +51,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        161
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110

@@ -108,6 +108,54 @@
     <Image Include="pac-up-open.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="inky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="inky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="inky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="inky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blinky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blinky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blinky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blinky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="clyde-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="clyde-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="clyde-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="clyde-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pinky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pinky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pinky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="pinky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="idi_spla.bin">

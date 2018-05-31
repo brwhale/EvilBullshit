@@ -166,8 +166,20 @@
   <ItemGroup>
     <Image Include="..\..\..\Pictures\elephant.png" />
     <Image Include="bitmap1.bmp" />
+    <Image Include="blinky-down.png" />
+    <Image Include="blinky-left.png" />
+    <Image Include="blinky-right.png" />
+    <Image Include="blinky-up.png" />
+    <Image Include="clyde-down.png" />
+    <Image Include="clyde-left.png" />
+    <Image Include="clyde-right.png" />
+    <Image Include="clyde-up.png" />
     <Image Include="elephant.png" />
     <Image Include="EvilBullshitWindowless.ico" />
+    <Image Include="inky-down.png" />
+    <Image Include="inky-left.png" />
+    <Image Include="inky-right.png" />
+    <Image Include="inky-up.png" />
     <Image Include="logo-1.png" />
     <Image Include="logo-2.png" />
     <Image Include="logo-3.png" />
@@ -180,6 +192,10 @@
     <Image Include="pac-right-open.png" />
     <Image Include="pac-up-closed.png" />
     <Image Include="pac-up-open.png" />
+    <Image Include="pinky-down.png" />
+    <Image Include="pinky-left.png" />
+    <Image Include="pinky-right.png" />
+    <Image Include="pinky-up.png" />
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -26,22 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_EVILBULLSHITWINDOWLESS));
 
 	MSG msg;
-
-	// load images here
-	g_slashMap = LoadSplashImage(IDB_PNG1);
-
-	logoAnimation = vector<HBITMAP>();
-	logoAnimation.push_back(LoadSplashImage(IDB_logo0));
-	logoAnimation.push_back(LoadSplashImage(IDB_logo1));
-	logoAnimation.push_back(LoadSplashImage(IDB_logo2));
-	logoAnimation.push_back(LoadSplashImage(IDB_logo3));
-
-	// create splash window and init it
-	g_splashWindow = CreateSplashWindow(hInstance);
-	g_evilWindow = CreateSplashWindow(hInstance);
-	SetSplashImage(g_splashWindow, g_slashMap, 0, 0, true);
-	SetSplashImage(g_evilWindow, g_slashMap, 0, 0, true);
-
+	hInst = hInstance;
 	// enter main loop
 	loopforever();
 
