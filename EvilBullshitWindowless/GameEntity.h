@@ -28,12 +28,14 @@ public:
 		}
 	}
 
-	void target(int posx, int posy) {
-		if (directionLocked) return;
+	int target(int posx, int posy) {
 		auto xdiff = posx - x;
 		auto ydiff = posy - y;
+		auto axdiff = abs(xdiff);
+		auto aydiff = abs(ydiff);
+		if (directionLocked) return axdiff + aydiff;
 		auto oldD = direction;
-		if (abs(xdiff) > abs(ydiff)) {
+		if (axdiff > aydiff) {
 			if (xdiff > 0) {
 				direction = 1;
 			}
@@ -63,6 +65,7 @@ public:
 			}
 			directionLocked = true;
 		}
+		return axdiff + aydiff;
 	}
 
 	void LoadSpritemap(vector<int> spriteIds) {

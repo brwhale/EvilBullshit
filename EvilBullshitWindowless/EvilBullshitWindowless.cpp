@@ -29,6 +29,7 @@ HWND g_splashWindow;
 HWND g_evilWindow;
 HBITMAP g_slashMap;
 vector<HBITMAP> logoAnimation;
+vector<HBITMAP> deathAnimation;
 
 int maxx;
 int maxy;
@@ -96,6 +97,14 @@ void loopforever() {
 	logoAnimation.push_back(LoadSplashImage(IDB_logo2));
 	logoAnimation.push_back(LoadSplashImage(IDB_logo3));
 
+	deathAnimation = vector<HBITMAP>();
+	deathAnimation.push_back(LoadSplashImage(IDB_Die1));
+	deathAnimation.push_back(LoadSplashImage(IDB_Die2));
+	deathAnimation.push_back(LoadSplashImage(IDB_Die3));
+	deathAnimation.push_back(LoadSplashImage(IDB_Die4));
+	int deathx = 800;
+	int deathy = 600;
+
 	// create splash window and init it
 	g_splashWindow = CreateSplashWindow(hInst);
 	g_evilWindow = CreateSplashWindow(hInst);
@@ -133,7 +142,7 @@ void loopforever() {
 	// enter loop state
 	while (1) {
 		// do bounce animation
-		{
+		if (gamestate < 3) {
 			if (posX > maxx - g_sizeSplash.cx || posX < 0) {
 				xd *= -1;
 			}
@@ -154,60 +163,79 @@ void loopforever() {
 					SwitchToThisWindow(pinky.window, true);
 					SwitchToThisWindow(blinky.window, true);
 				}
-			}
-		}
-		if (gamestate == 0) {
-			SwitchToThisWindow(g_splashWindow, true);
-			SetSplashImage(g_splashWindow, logoAnimation[(i % 40)/10], posX, posY);
-		} else
-		if (gamestate == 1) {
-			SetSplashImage(g_splashWindow, logoAnimation[((1+i) % 40) / 10], maxx-posX, posY);
-			SetSplashImage(g_evilWindow, logoAnimation[(i % 40) / 10], posX, posY);
-			SwitchToThisWindow(pacMan.window, true);
-			i++;
-			if (i < 0 || i >= 200) {
-				i = 0;
-			}
-			// only use the most recent direction
-			{
-				bool test;
-				if (test = GetAsyncKeyState(VK_LEFT)) {
-					if (!left)
-						pacMan.direction = 0;
+				else if (gamestate == 2) {
+					// switch from death screen to secret mode
+					gamestate = 3;
+					ShowWindow(pacMan.window, SW_HIDE);
+					ShowWindow(clyde.window, SW_HIDE);
+					ShowWindow(inky.window, SW_HIDE);
+					ShowWindow(pinky.window, SW_HIDE);
+					ShowWindow(blinky.window, SW_HIDE);
+					ShowWindow(g_splashWindow, SW_HIDE);
+					ShowWindow(g_evilWindow, SW_HIDE);
 				}
-				left = test;
-				if (test = GetAsyncKeyState(VK_RIGHT)) {
-					if (!right)
-						pacMan.direction = 1;
-				}
-				right = test;
-				if (test = GetAsyncKeyState(VK_UP)) {
-					if (!up)
-						pacMan.direction = 2;
-				}
-				up = test;
-				if (test = GetAsyncKeyState(VK_DOWN)) {
-					if (!down)
-						pacMan.direction = 3;
-				}
-				down = test;
 			}
 
-			// have ghosts target eachother
-			/*for (int k = 0; k < ghosts.size(); k++) {
-				auto kprime = rotclamp(k+1, 0, ghosts.size() - 1);
-				ghosts[k]->target(ghosts[kprime]->x, ghosts[kprime]->y);
-			}*/
-
-			for (auto&& ghost : ghosts) {
-				// have ghosts target you
-				ghost->target(pacMan.x, pacMan.y);
-				ghost->update();
-				ghost->draw();
+			if (gamestate == 0) {
+				SwitchToThisWindow(g_splashWindow, true);
+				SetSplashImage(g_splashWindow, logoAnimation[(i % 40) / 10], posX, posY);
 			}
+			else if (gamestate == 2) {
+				SwitchToThisWindow(g_splashWindow, true);
+				SetSplashImage(g_splashWindow, deathAnimation[(i % 40) / 10], (maxx - deathx) / 2, (maxy - deathy) / 2);
+			}
+			else if (gamestate == 1) {
+				SetSplashImage(g_splashWindow, logoAnimation[((1 + i) % 40) / 10], maxx - posX, posY);
+				SetSplashImage(g_evilWindow, logoAnimation[(i % 40) / 10], posX, posY);
+				SwitchToThisWindow(pacMan.window, true);
+				i++;
+				if (i < 0 || i >= 200) {
+					i = 0;
+				}
+				// only use the most recent direction
+				{
+					bool test;
+					if (test = GetAsyncKeyState(VK_LEFT)) {
+						if (!left)
+							pacMan.direction = 0;
+					}
+					left = test;
+					if (test = GetAsyncKeyState(VK_RIGHT)) {
+						if (!right)
+							pacMan.direction = 1;
+					}
+					right = test;
+					if (test = GetAsyncKeyState(VK_UP)) {
+						if (!up)
+							pacMan.direction = 2;
+					}
+					up = test;
+					if (test = GetAsyncKeyState(VK_DOWN)) {
+						if (!down)
+							pacMan.direction = 3;
+					}
+					down = test;
+				}
 
-			pacMan.update();
-			pacMan.draw();
+				// have ghosts target eachother
+				/*for (int k = 0; k < ghosts.size(); k++) {
+					auto kprime = rotclamp(k+1, 0, ghosts.size() - 1);
+					ghosts[k]->target(ghosts[kprime]->x, ghosts[kprime]->y);
+				}*/
+
+				for (auto&& ghost : ghosts) {
+					// have ghosts target you
+					if (48 > ghost->target(pacMan.x, pacMan.y)) {
+						// you die
+						gamestate = 2;
+					}
+					ghost->update();
+					ghost->draw();
+				}
+
+				pacMan.update();
+				pacMan.draw();
+			}
 		}
 
 		// this is the text replacer
