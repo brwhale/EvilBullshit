@@ -201,6 +201,8 @@
     <Image Include="pinky-right.png" />
     <Image Include="pinky-up.png" />
     <Image Include="small.ico" />
+    <Image Include="wall.png" />
+    <Image Include="wall_w.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="idi_spla.bin" />
