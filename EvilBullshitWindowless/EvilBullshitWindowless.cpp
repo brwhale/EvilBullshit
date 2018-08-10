@@ -169,7 +169,7 @@ void loopforever() {
 				yd *= -1;
 			}
 			posY += yd;
-			i+= 8;
+			i += 8;
 			if (i < 0 || i >= 4000) {
 				i = 0;
 				if (gamestate == 0) {

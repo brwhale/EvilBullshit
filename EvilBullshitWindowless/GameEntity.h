@@ -148,3 +148,14 @@ public:
 		}
 	}
 };
+
+GameEntity* MakeWall(int posx, int posy, bool wide = true, bool big = true) {
+	auto ret = &GameEntity(posx, posy, wide ? big ? 480 : 240 : 48, wide ? 48 : big ? 480 : 240);
+	if (wide) {
+		ret->LoadSpritemap({ IDB_WALL_W });
+	}
+	else {
+		ret->LoadSpritemap({ IDB_WALL });
+	}
+	return ret;
+}
