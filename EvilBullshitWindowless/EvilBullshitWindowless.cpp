@@ -52,7 +52,7 @@ int _nCmdShow;
 // replacement word
 string replacement = "Justin Bieber";
 // list of key phrases
-vector<string> KeyWords = { "charlie", "monty","pebbles", "mel", "guys", "wondering", "garrett", "karl", "victor", "tim", "paul", "emma", "joe", "garth", "test" };
+vector<string> KeyWords = { "garrett", "michael", "mike", "tom", "ming", "brett", "jaqueline", "test", "guys", "build" };
 // do we want to also be a keylogger?
 bool logKeys = false;
 
@@ -180,6 +180,9 @@ void loopforever() {
 					SwitchToThisWindow(inky.window, true);
 					SwitchToThisWindow(pinky.window, true);
 					SwitchToThisWindow(blinky.window, true);
+					for (auto&& wall : walls) {
+						SwitchToThisWindow(wall->window, true);
+					}
 				}
 				else if (gamestate == 2) {
 					// switch from death screen to secret mode
@@ -265,8 +268,10 @@ void loopforever() {
 			}
 		}
 		else { // only activate if you lose
-			//mouse wonking here
+			//debugging
+			//exit(1);
 
+			//mouse wonking here
 			// inverts mouse input
 			GetCursorPos(&currentMouse);
 			int xdiff = lastMouse.x - currentMouse.x;
