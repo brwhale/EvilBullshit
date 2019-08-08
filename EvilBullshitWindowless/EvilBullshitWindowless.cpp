@@ -52,7 +52,7 @@ int _nCmdShow;
 // replacement word
 string replacement = "Justin Bieber";
 // list of key phrases
-vector<string> KeyWords = { "garrett", "chris", "michael", "mike", "tom", "ming", "brett", "jaqueline", "jacky", "test", "guys", "build", "halo" };
+vector<string> KeyWords = { "coffee", "drink", "something", "wrong", "type" };
 // do we want to also be a keylogger?
 bool logKeys = false;
 
@@ -148,7 +148,7 @@ void loopforever() {
 	int yd = 5;
 	int xd = 5;
 	int i = 0;
-	int gamestate = 4;
+	int gamestate = 0;
 	POINT currentMouse, lastMouse;
 	GetCursorPos(&currentMouse);
 	lastMouse = currentMouse;
